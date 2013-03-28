@@ -32,7 +32,6 @@ architecture rtl of l3_add_lookup is
 
 constant l3_offset		: signed (31 downto 0) := (others => '0'); -- L3 memory offset address.
 signal price_match		: std_logic;
-signal read_enable		: std_logic;
 signal calc_addr_final	: std_logic;
 signal addr_count		: signed (31 downto 0);
 signal new_order_addr	: signed (31 downto 0);
@@ -43,9 +42,16 @@ address <= std_logic_vector(addr_count);
 
 process (clk)
 begin
-
+if rising_edge(clk) then
+if (reset = '1') then
+	address_final <= '0';
+	price_match <= '0';
+	calc_addr_final <= '0';
+	addr_count <= l3_offset;
+	new_order_addr <= l3_offset;
+else
+if (add_enable = '1') then
 	-- Initializations for the testing.
-	read_enable <= '1';
 	price_match <= '0';
 	calc_addr_final <= '0';
 	addr_count <= l3_offset;
@@ -74,6 +80,9 @@ begin
 			end if;
 		end if;
 	end if;
+end if;
+end if;
+end if;
 end process;
 
 end rtl;
